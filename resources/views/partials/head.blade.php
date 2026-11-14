@@ -1,0 +1,18 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>@yield('title', 'التدريب الميداني') · إسناد</title>
+<meta name="description" content="التدريب الميداني في إسناد لطلاب الجامعات والخريجين: مشاريع حقيقية، إشراف مختص، وشهادة إتمام.">
+<meta name="theme-color" content="#12285A">
+@if (!empty($noindex))<meta name="robots" content="noindex">@endif
+<link rel="icon" href="{{ asset('images/isnad-logo.png') }}">
+<script>
+    // الوضع الفاتح/الغامق قبل ما تنرسم الصفحة (بدون وميض)
+    (function () { try { var t = localStorage.getItem('isnad-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{-- احتياطي لحد ما تنضاف ملفات خط ثمانية --}}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+@include('partials.fonts')
+<link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
