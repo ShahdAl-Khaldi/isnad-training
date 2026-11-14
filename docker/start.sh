@@ -7,6 +7,11 @@ PORT="${PORT:-10000}"
 sed -ri "s/^Listen .*/Listen ${PORT}/" /etc/apache2/ports.conf
 sed -ri "s/<VirtualHost \*:[0-9]+>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf
 
+# Render بيولّد مفتاح base64 بدون بادئة "base64:" اللي Laravel بيحتاجها
+if [ -n "$APP_KEY" ] && [ "${APP_KEY#base64:}" = "$APP_KEY" ]; then
+    export APP_KEY="base64:${APP_KEY}"
+fi
+
 # قاعدة بيانات SQLite
 DB_FILE="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
 mkdir -p "$(dirname "$DB_FILE")"
