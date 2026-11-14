@@ -8,7 +8,8 @@
 <link rel="icon" href="{{ asset('images/isnad-logo.png') }}">
 <script>
     // الوضع الفاتح/الغامق قبل ما تنرسم الصفحة (بدون وميض)
-    (function () { try { var t = localStorage.getItem('isnad-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+    // الوضع الليلي هو الأساسي، والزائر بيقدر يغيّره للفاتح ومنحفظ اختياره
+    (function () { var t = 'dark'; try { t = localStorage.getItem('isnad-theme') || 'dark'; } catch (e) {} document.documentElement.setAttribute('data-theme', t); })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
