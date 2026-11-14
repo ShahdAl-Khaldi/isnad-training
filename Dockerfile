@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # مكتبات النظام والإضافات اللي بيحتاجها Laravel
 RUN apt-get update \
