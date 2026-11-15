@@ -43,4 +43,8 @@ return [
         'password' => env('ADMIN_PASSWORD'),
     ],
 
+
+    // مكان حفظ صور التحويلات والبروفايل: local (القرص) أو database (جوّا قاعدة البيانات، للاستضافة)
+    'file_store' => env('FILE_STORE', 'local'),
+
 ];

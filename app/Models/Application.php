@@ -229,7 +229,7 @@ class Application extends Model
     public function submitPayment(PaymentMethod $method, ?string $reference, string $receiptPath): void
     {
         if ($this->receipt_path && $this->receipt_path !== $receiptPath) {
-            Storage::disk('local')->delete($this->receipt_path);
+            \App\Support\FileStore::delete($this->receipt_path);
         }
         $this->payment_method_id = $method->id;
         $this->payment_reference = $reference;

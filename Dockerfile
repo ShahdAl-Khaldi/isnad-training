@@ -2,8 +2,9 @@ FROM php:8.4-apache
 
 # مكتبات النظام والإضافات اللي بيحتاجها Laravel
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git unzip libzip-dev libicu-dev libsqlite3-dev \
-    && docker-php-ext-install zip intl pdo_sqlite opcache \
+    && apt-get install -y --no-install-recommends git unzip libzip-dev libicu-dev libsqlite3-dev libpq-dev libpng-dev libjpeg62-turbo-dev libwebp-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
+    && docker-php-ext-install zip intl pdo_sqlite pdo_pgsql gd opcache \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 

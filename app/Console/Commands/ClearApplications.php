@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Application;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use App\Support\FileStore;
 
 class ClearApplications extends Command
 {
@@ -28,7 +28,7 @@ class ClearApplications extends Command
         }
 
         Application::query()->delete();
-        Storage::disk('local')->deleteDirectory('receipts');
+        FileStore::deleteDirectory('receipts');
 
         $this->info("انمسح {$count} طلب مع صور التحويلات. حساب الأدمن والإعدادات وطرق الدفع زي ما هم.");
 

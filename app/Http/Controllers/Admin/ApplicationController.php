@@ -8,7 +8,7 @@ use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
+use App\Support\FileStore;
 use Illuminate\View\View;
 
 class ApplicationController extends Controller
@@ -26,9 +26,9 @@ class ApplicationController extends Controller
 
     public function receipt(Application $application)
     {
-        abort_unless($application->receipt_path && Storage::disk('local')->exists($application->receipt_path), 404);
+        abort_unless(FileStore::exists($application->receipt_path), 404);
 
-        return Storage::disk('local')->response($application->receipt_path, null, [
+        return FileStore::response($application->receipt_path, [
             'Cache-Control' => 'private, no-store',
         ]);
     }
@@ -87,7 +87,7 @@ class ApplicationController extends Controller
     public function destroy(Application $application): RedirectResponse
     {
         if ($application->receipt_path) {
-            Storage::disk('local')->delete($application->receipt_path);
+            FileStore::delete($application->receipt_path);
         }
         $application->delete();
 

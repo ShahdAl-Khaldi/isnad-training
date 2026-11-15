@@ -12,7 +12,13 @@ if [ -n "$APP_KEY" ] && [ "${APP_KEY#base64:}" = "$APP_KEY" ]; then
     export APP_KEY="base64:${APP_KEY}"
 fi
 
-# قاعدة بيانات SQLite
+# قاعدة بيانات دائمة (Neon / Postgres): إذا في DB_URL، البيانات والصور بتنحفظ هناك وما بتنمسح
+if [ -n "$DB_URL" ]; then
+    export DB_CONNECTION=pgsql
+    export FILE_STORE=database
+fi
+
+# قاعدة بيانات SQLite (لما ما في DB_URL)
 DB_FILE="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
 mkdir -p "$(dirname "$DB_FILE")"
 [ -f "$DB_FILE" ] || touch "$DB_FILE"

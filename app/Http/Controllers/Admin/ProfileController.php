@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use App\Support\FileStore;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -42,10 +42,10 @@ class ProfileController extends Controller
 
         $user = $request->user();
         $old = $user->avatar_path;
-        $user->avatar_path = $request->file('avatar')->store('avatars', 'local');
+        $user->avatar_path = FileStore::put($request->file('avatar'), 'avatars');
         $user->save();
         if ($old) {
-            Storage::disk('local')->delete($old);
+            FileStore::delete($old);
         }
 
         return back()->with('success', 'تغيّرت صورتك.');
@@ -55,7 +55,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         if ($user->avatar_path) {
-            Storage::disk('local')->delete($user->avatar_path);
+            FileStore::delete($user->avatar_path);
             $user->avatar_path = null;
             $user->save();
         }
@@ -65,9 +65,9 @@ class ProfileController extends Controller
 
     public function showAvatar(User $user)
     {
-        abort_unless($user->avatar_path && Storage::disk('local')->exists($user->avatar_path), 404);
+        abort_unless(FileStore::exists($user->avatar_path), 404);
 
-        return Storage::disk('local')->response($user->avatar_path, null, ['Cache-Control' => 'private, max-age=86400']);
+        return FileStore::response($user->avatar_path, ['Cache-Control' => 'private, max-age=86400']);
     }
 
     public function password(Request $request): RedirectResponse

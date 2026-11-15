@@ -82,7 +82,7 @@ class StudentController extends Controller
         $app->fee = Setting::feeFor((int) $data['hours']);
         $app->save();
 
-        $path = $request->file('receipt')->store('receipts', 'local');
+        $path = \App\Support\FileStore::put($request->file('receipt'), 'receipts');
         $app->submitPayment(PaymentMethod::findOrFail($data['payment_method_id']), $data['payment_reference'] ?? null, $path);
 
         return redirect()->route('apply.done')->with('registered', explode(' ', trim($app->name))[0]);
