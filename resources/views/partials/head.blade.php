@@ -6,6 +6,20 @@
 <meta name="theme-color" content="#12285A">
 @if (!empty($noindex))<meta name="robots" content="noindex">@endif
 <link rel="icon" href="{{ asset('images/isnad-logo.png') }}">
+{{-- صورة المعاينة لما ينبعت الرابط (واتساب، فيسبوك، تيليجرام...) --}}
+@php $ogTitle = trim($__env->yieldContent('title', 'التدريب الميداني')).' · إسناد'; @endphp
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="إسناد">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:title" content="{{ $ogTitle }}">
+<meta property="og:description" content="التدريب الميداني في إسناد لطلاب الجامعات والخريجين: مشاريع حقيقية، إشراف مختص، وشهادة إتمام.">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:image" content="{{ asset('images/og-image.jpg') }}?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="طلاب بيشتغلوا على مشاريع بمختبر إسناد">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ asset('images/og-image.jpg') }}?v=1">
 <script>
     // الوضع الفاتح/الغامق قبل ما تنرسم الصفحة (بدون وميض)
     // الوضع الليلي هو الأساسي، والزائر بيقدر يغيّره للفاتح ومنحفظ اختياره
