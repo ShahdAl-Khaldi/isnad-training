@@ -59,6 +59,18 @@
     @media (max-width: 640px) { .payee-grid { grid-template-columns: 1fr; } }
     .pm-panel[hidden] { display: none !important; }
 
+    /* باركود الدفع لتاجر */
+    .pm-qr { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 18px 14px; margin: 4px 0 12px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); text-align: center; }
+    .pm-qr-lbl { color: var(--muted); font-size: 14px; }
+    .pm-qr-frame { display: block; padding: 12px; background: #fff; border-radius: 18px; border: 4px solid var(--pm); box-shadow: 0 16px 34px -18px var(--pm); transition: transform .35s cubic-bezier(.3, 1.5, .5, 1); }
+    .pm-qr-frame:hover { transform: scale(1.03); }
+    .pm-qr-frame img { display: block; width: 200px; height: 200px; image-rendering: pixelated; }
+    .pm-qr-dl { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 24px; border-radius: 14px; background: var(--pm); color: var(--pm-ink); font-weight: 700; text-decoration: none; transition: filter .2s, transform .15s; }
+    .pm-qr-dl:hover { filter: brightness(1.08); }
+    .pm-qr-dl:active { transform: scale(.97); }
+    .pm-qr-tip { color: var(--muted); font-size: 12.5px; }
+    @media (max-width: 560px) { .pm-qr-dl { width: 100%; } .pm-qr-frame img { width: 180px; height: 180px; } }
+
     /* السعر: رقم كبير بألوان قوس قزح + خط ملوّن تحته */
     .price-rb { --rb: linear-gradient(90deg, #E8862F, #E2B714, #3FB86A, #2E9BE0, #8E62E8, #E8862F);
         display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 10px 8px; text-align: center; }
@@ -88,6 +100,11 @@
         <span class="price-rb-lbl">رسوم تشغيلية مرة وحدة لكامل الفترة</span>
     </div>
 
+    @if ($methods->count() === 1)
+        {{-- طريقة دفع وحدة: ما في داعي يختار --}}
+        <input type="hidden" name="payment_method_id" value="{{ $methods->first()->id }}">
+        @error('payment_method_id')<span class="error">{{ $message }}</span>@enderror
+    @else
     <fieldset class="field" style="border:0;padding:0;margin:0">
         <legend class="legend" style="margin-bottom:8px">اختار طريقة التحويل</legend>
         <div class="pm-tiles">
@@ -108,28 +125,38 @@
         </div>
         @error('payment_method_id')<span class="error">{{ $message }}</span>@enderror
     </fieldset>
+    @endif
 
     @foreach ($methods as $m)
-        @php $isWallet = $m->type === 'wallet'; @endphp
+        @php $isWallet = $m->type === 'wallet'; $qr = $m->qrUrl(); @endphp
         <div class="pm-panel pm pm-{{ $m->brand() ?? 'other' }} pay-panel" data-method-panel="{{ $m->id }}">
             <div class="pm-head">
                 @if ($m->logoUrl())
                     <span class="pm-logo"><img src="{{ $m->logoUrl() }}" alt="" loading="lazy"></span>
                 @endif
-                <div><h3>التحويل عبر {{ $m->title }}</h3><span class="tiny muted">{{ $m->subtitle() }}</span></div>
+                <div><h3>{{ $qr ? 'الدفع' : 'التحويل' }} عبر {{ $m->title }}</h3><span class="tiny muted">{{ $m->subtitle() }}</span></div>
             </div>
+            @if ($qr)
+                {{-- باركود الدفع لتاجر + تحميله (للي فاتح من الموبايل) --}}
+                <div class="pm-qr">
+                    <span class="pm-qr-lbl">امسح الرمز من تطبيق {{ $m->title }}</span>
+                    <span class="pm-qr-frame"><img src="{{ $qr }}" alt="باركود الدفع لـ {{ $m->account_name }}" width="200" height="200"></span>
+                    <a class="pm-qr-dl" href="{{ $qr }}" download="isnad-jawwal-pay-qr.png">@include('partials.icon', ['n' => 'download', 'size' => 18]) حمّل الباركود</a>
+                    <span class="pm-qr-tip">فاتح من الموبايل؟ حمّله وافتحه من التطبيق ← مسح من الصور</span>
+                </div>
+            @endif
             {{-- اسم صاحب الحساب ورقمه: مربعين جنب بعض --}}
             <div class="payee-grid">
                 @if ($m->account_name)
                     <div class="payee-it">
                         <span class="payee-ic">@include('partials.icon', ['n' => 'user', 'size' => 20])</span>
-                        <span class="payee-tx"><small>اسم صاحب الحساب</small><b>{{ $m->account_name }}</b></span>
+                        <span class="payee-tx"><small>{{ $qr ? 'اسم التاجر' : 'اسم صاحب الحساب' }}</small><b>{{ $m->account_name }}</b></span>
                     </div>
                 @endif
                 @if ($m->account_number)
                     <div class="payee-it">
                         <span class="payee-ic">@include('partials.icon', ['n' => 'phone', 'size' => 20])</span>
-                        <span class="payee-tx"><small>{{ $isWallet ? 'رقم المحفظة' : 'رقم الجوال' }}</small><b class="ltr">{{ $m->account_number }}</b></span>
+                        <span class="payee-tx"><small>{{ $qr ? 'رقم التاجر' : ($isWallet ? 'رقم المحفظة' : 'رقم الجوال') }}</small><b class="ltr">{{ $m->account_number }}</b></span>
                         <button class="copy payee-copy-sm" type="button" data-copy="{{ $m->account_number }}">@include('partials.icon', ['n' => 'copy', 'size' => 14])<span class="label">نسخ</span></button>
                     </div>
                 @endif
@@ -139,7 +166,10 @@
                     <span class="row" style="gap:8px"><span class="v">{{ $m->iban }}</span><button class="copy" type="button" data-copy="{{ $m->iban }}">@include('partials.icon', ['n' => 'copy', 'size' => 14])<span class="label">نسخ</span></button></span></div>
             @endif
             <div class="kv"><span class="muted">المبلغ</span><span class="v pm-amount"><span data-amount>{{ $amount }}</span> ₪</span></div>
-            <div class="pm-note">@include('partials.icon', ['n' => 'alert', 'size' => 16])<span>اكتب اسمك بملاحظة التحويل.</span></div>
+            <div class="pm-note">@include('partials.icon', ['n' => 'alert', 'size' => 16])<span>اكتب اسمك بملاحظة {{ $qr ? 'الدفع' : 'التحويل' }}.</span></div>
+            @if ($qr)
+                <div class="pm-note">@include('partials.icon', ['n' => 'phone', 'size' => 16])<span>ما عندك إنترنت؟ اطلب <b class="ltr">*110#</b> وادفع من غير تطبيق.</span></div>
+            @endif
         </div>
     @endforeach
 
