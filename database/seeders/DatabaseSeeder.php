@@ -29,32 +29,43 @@ class DatabaseSeeder extends Seeder
         // طرق الدفع (بتتعدل من لوحة إسناد ← الإعدادات)
         // بتعبّي بس الخانات الفاضية، وما بتمسح أي تعديل عملته من اللوحة.
         // بالخطوات: {amount} = المبلغ، {number} = رقم الحساب، {name} = اسم صاحب الحساب
-        // الدفع صار بس عن طريق جوال باي (دفع لتاجر)، وبنك فلسطين انشال
-        PaymentMethod::where('title', 'بنك فلسطين')->delete();
-
         $methods = [
             [
-                'title' => 'جوال باي', 'type' => 'wallet', 'sort' => 1,
-                'account_name' => 'الترا نت', 'account_number' => '0592471020',
-                'notes' => 'اكتب اسمك الكامل بملاحظة الدفع.',
+                'title' => 'بنك فلسطين', 'type' => 'bank', 'sort' => 1,
+                'account_name' => 'محمود أبو حمام', 'account_number' => '0594061657',
+                'notes' => 'اكتب اسمك الكامل بملاحظة التحويل.',
                 'steps' => implode("\n", [
-                    'افتح تطبيق جوال باي واختار "الدفع للتاجر".',
-                    'امسح الباركود أو اكتب رقم التاجر {number}، وتأكد إنه الاسم: {name}.',
-                    'اكتب المبلغ {amount} شيكل واسمك بالملاحظة، وأكّد الدفع.',
-                    'خُد سكرين شوت لإشعار الدفع وارفعه تحت.',
+                    'افتح تطبيق بنك فلسطين وادخل على حسابك.',
+                    'اختار "تحويل" وبعدين التحويل لرقم جوال / عميل بنك فلسطين.',
+                    'اكتب الرقم {number} وتأكد إنه الاسم اللي بيطلع: {name}.',
+                    'اكتب المبلغ {amount} شيكل.',
+                    'اكتب اسمك الكامل بملاحظة التحويل وأكّد العملية.',
+                    'خُد سكرين شوت لإشعار التحويل وارفعه تحت.',
+                ]),
+            ],
+            [
+                'title' => 'جوال باي', 'type' => 'wallet', 'sort' => 2,
+                'account_name' => 'محمود أبو حمام', 'account_number' => '0594061657',
+                'notes' => 'اكتب اسمك الكامل بملاحظة التحويل.',
+                'steps' => implode("\n", [
+                    'افتح تطبيق جوال باي.',
+                    'اختار "تحويل أموال".',
+                    'اكتب رقم المحفظة {number} وتأكد إنه الاسم: {name}.',
+                    'اكتب المبلغ {amount} شيكل وأكّد العملية.',
+                    'خُد سكرين شوت لإشعار التحويل وارفعه تحت.',
                 ]),
             ],
         ];
-        // بيانات جوال باي القديمة (تحويل لمحفظة شخصية) بتتبدّل ببيانات التاجر
-        $oldWalletNumber = '0594061657';
+        // بيانات "دفع لتاجر" (الترا نت) اللي انضافت فترة ورجعنا عنها: بتتبدّل بالبيانات الأصلية
+        $merchantNumber = '0592471020';
         foreach ($methods as $m) {
             $method = PaymentMethod::firstOrNew(['title' => $m['title']]);
             if (! $method->exists) {
                 $method->active = true;
             }
-            $replaceOld = preg_replace('/\D/', '', (string) $method->account_number) === $oldWalletNumber;
+            $replaceMerchant = preg_replace('/\D/', '', (string) $method->account_number) === $merchantNumber;
             foreach ($m as $key => $value) {
-                if ($replaceOld || blank($method->{$key})) {
+                if ($replaceMerchant || blank($method->{$key})) {
                     $method->{$key} = $value;
                 }
             }

@@ -30,16 +30,8 @@ class PaymentMethod extends Model
     /** هوية كل طريقة دفع (لونها وشعارها) حسب اسمها */
     public const BRANDS = [
         'bop' => ['match' => ['فلسطين', 'palestine'], 'logo' => 'images/payments/bank-of-palestine.png', 'label' => 'تحويل بنكي'],
-        'jawwal' => ['match' => ['جوال', 'jawwal'], 'logo' => 'images/payments/jawwal-pay.png', 'label' => 'دفع لتاجر', 'qr' => 'images/payments/jawwal-qr.png'],
+        'jawwal' => ['match' => ['جوال', 'jawwal'], 'logo' => 'images/payments/jawwal-pay.png', 'label' => 'محفظة إلكترونية'],
     ];
-
-    /** باركود الدفع (لجوال باي: دفع لتاجر) */
-    public function qrUrl(): ?string
-    {
-        $qr = self::BRANDS[$this->brand()]['qr'] ?? null;
-
-        return $qr && is_file(public_path($qr)) ? asset($qr) : null;
-    }
 
     public function brand(): ?string
     {

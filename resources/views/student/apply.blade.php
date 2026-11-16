@@ -77,7 +77,7 @@
             <h1 class="title-words" aria-label="سجّل بالتدريب الميداني بإسناد">
                 @foreach (['سجّل', 'بالتدريب', 'الميداني'] as $i => $w)<span class="w" style="--i:{{ $i }}" aria-hidden="true">{{ $w }}</span> @endforeach<em class="w" style="--i:3" aria-hidden="true">بإسناد</em>
             </h1>
-            <p class="lead fade-up" style="--d:5">تدريب على مشاريع حقيقية بفريق ومشرف مختص، لطلاب الجامعات والخريجين. عبّي بياناتك، ادفع الرسوم بجوال باي وارفع صورة الإشعار، وبنثبّت مقعدك.</p>
+            <p class="lead fade-up" style="--d:5">تدريب على مشاريع حقيقية بفريق ومشرف مختص، لطلاب الجامعات والخريجين. عبّي بياناتك، حوّل الرسوم وارفع صورة التحويل، وبنثبّت مقعدك.</p>
             <div class="chips-sm fade-up" style="--d:3">
                 @foreach ($fees as $h => $f)<span>@include('partials.icon', ['n' => 'clock', 'size' => 14]) {{ $h }} ساعة · {{ $f }} ₪</span>@endforeach
                 <span>@include('partials.icon', ['n' => 'award', 'size' => 14]) شهادة + Portfolio</span>
@@ -232,7 +232,7 @@
                     <b style="font-family:var(--font-display)">كيف بتمشي الأمور</b>
                     <div class="mini-journey">
                         <div data-n="١" style="--b:0">عبّي بياناتك واختار المسار والساعات</div>
-                        <div data-n="٢" style="--b:1">ادفع الرسوم عن طريق جوال باي</div>
+                        <div data-n="٢" style="--b:1">حوّل الرسوم لبنك فلسطين أو جوال باي</div>
                         <div data-n="٣" style="--b:2">ارفع صورة التحويل وأرسل الطلب</div>
                         <div data-n="٤" style="--b:3">بنتأكد من التحويل ومقعدك بيتثبّت</div>
                     </div>
